@@ -1,14 +1,9 @@
 # EXPERIMENT--04-INTERUPT-GENRATION-USING-SENSOR-AND-VISUALIZING-USING-SERIAL-MONITOR
-
 ### Aim:
 To Interface a IR Sensor to digital port of iot development board  and generate an interrupt and visualize on the serial monitor 
-
 ### Components required:
 STM32 CUBE IDE,  serial port utility monitor .
-
-
 ## Theory :
-
 An infrared (IR) sensor a proximity sensor, or a ‘nearness’ sensor senses whether there is an object near it or not. The IR stands for Infrared sensor. Infrared is the light out of our visible spectrum.
 
 Working of an IR Sensor
@@ -31,8 +26,6 @@ Connect GND pin to evive’s GND pin.
 Connect OUT to any gpio and configure that pin as EXTI mode 
 
 ### Interrupts
-
-
 Interrupts are asynchronous (i.e. can happen anytime) events that disrupt the normal flow of your program. This allows the microcontroller to focus on a key task and attend to these events (e.g. pressing a button) as they come without needing to wait for them.
 
 With interrupt, we do not need to continuously check the state of the digital input pin. When an interrupt occurs (a change is detected), the processor stops the execution of the main program and a function is called upon known as ISR or the Interrupt Service Routine. The processor then temporarily works on a different task (ISR) and then gets back to the main program after the handling routine has ended.
@@ -107,19 +100,60 @@ The diagram below shows how the GPIO pins are connected to the 16 interrupt line
 ![image](https://github.com/vasanthkumarch/EXPERIMENT--04-INTERUPT-GENRATION-USING-SENSOR-AND-VISUALIZING-USING-SERIAL-MONITOR/assets/36288975/cd2c17fc-afac-4d72-97f9-20db3e63f23f)
 19. click on the run to observe the values 
 
-
-  
-
 ## STM 32 CUBE PROGRAM :
+```
+#include "main.h"
+#include "stdio.h"
+void HAL_GPIO_EXTI_Callback(uint16_t);
+void SystemClock_Config(void);
+static void MX_GPIO_Init(void);
+static void MX_USART2_UART_Init(void);
 
+#if defined(__ICCARM__) || defined (__ARMCC__VERSION)
+#define PUTCHAR_PROTOYPE int fputc(int ch,FILE *f)
+#elif defined(__GNUC__)
+#define PUTCHAR_PROTOTYPE int __io__putchar(int ch)
+#endif
 
+int main(void)
+{
+  HAL_Init();
+  SystemClock_Config();
+  MX_GPIO_Init();
+  MX_USART2_UART_Init();
+  while (1)
+  {
+	  HAL_GPIO_EXTI_Callback (GPIO_PIN_4);
+	  HAL_Delay(1000);
+  }
+}
+void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
+{
+if(HAL_GPIO_ReadPin(GPIOA,GPIO_PIN_4)==0)
+{
+	 printf("IR ON\n");
+}
+else
+{
+	 printf("IR Off\n");
+}
+}
 
+PUTCHAR_PROTOTYPE
+{
+	HAL_UART_Transmit(&huart2, (uint8_t *)&ch, 1, 0xFFFF);
+	return ch;
+}
+```
 ## Output screen shots of serial port utility   :
- 
- 
- ## Circuit board :
- 
- 
- 
+![image](https://github.com/Shavedha/EXPERIMENT--04-INTERUPT-GENRATION-USING-SENSOR-AND-VISUALIZING-USING-SERIAL-MONITOR/assets/93427376/1747cc64-66fc-46b7-8935-ec203a2cd49b)
+
+## Circuit board :
+### Before detectiin of obstacle
+![image](https://github.com/Shavedha/EXPERIMENT--04-INTERUPT-GENRATION-USING-SENSOR-AND-VISUALIZING-USING-SERIAL-MONITOR/assets/93427376/fdd2de12-0344-41d4-b13d-0cbd10a2fbe8)
+
+### After detection of Obstacle 
+![image](https://github.com/Shavedha/EXPERIMENT--04-INTERUPT-GENRATION-USING-SENSOR-AND-VISUALIZING-USING-SERIAL-MONITOR/assets/93427376/a0052de2-cab8-46f7-b598-dd90bdc977a7)
+
 ## Result :
 Interfacing a  IR SENSOR and interrupt is generated using external interrupt mode , visualized on serial port 
